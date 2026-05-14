@@ -1,70 +1,81 @@
-# Getting Started with Create React App
+# AuthoAI
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+AI-assisted auto-filler for the **Massachusetts Standard Form for Medication Prior Authorization Requests**.
 
-## Available Scripts
+Physicians enter a Member ID and a few clinical details; AuthoAI pulls the patient record, then uses a local LLM (via [Ollama](https://ollama.com)) to generate ICD-10 codes, dosing schedules, clinical justifications, and medical necessity statements — all mapped to the official MA form sections A–F.
 
-In the project directory, you can run:
+> **Disclaimer:** AI-generated clinical content is for drafting assistance only. All fields must be reviewed and verified by a licensed clinician before submission.
 
-### `npm start`
+## Features
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+- **Patient lookup** from a local dataset by Member ID
+- **LLM-powered auto-fill** of clinical fields (ICD-10, dosing, justification, medical necessity)
+- **Live form preview** mirroring the MA Standard Prior Auth layout (Sections A–F)
+- **Form completeness score** showing how many required fields are filled
+- **Copy letter** — one-click copy of a medical necessity letter to clipboard
+- **Download PDF** — print-ready version via browser print dialog
+- **Fully offline** — no data leaves your machine
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## Prerequisites
 
-### `npm test`
+- [Node.js](https://nodejs.org/) >= 18
+- [Ollama](https://ollama.com) installed and running
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Quick Start
 
-### `npm run build`
+```bash
+# 1. Clone the repo
+git clone https://github.com/<your-username>/authoai.git
+cd authoai
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+# 2. Install dependencies
+npm install
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+# 3. Copy the env file and adjust if needed
+cp .env.example .env
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+# 4. Pull the model and start Ollama
+ollama pull adrienbrault/biomistral-7b:Q5_K_M
+ollama serve
 
-### `npm run eject`
+# 5. Start the app
+npm start
+```
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+The app opens at [http://localhost:3000](http://localhost:3000).
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## Regenerating the Patient Dataset
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+The synthetic patient dataset (`src/patient_dataset.json`) can be regenerated with:
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+```bash
+cd src
+python generate_dataset.py
+```
 
-## Learn More
+Requires Python >= 3.8 (standard library only, no pip dependencies).
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+## Project Structure
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+```
+authoai/
+├── public/             # Static assets
+├── src/
+│   ├── App.js          # Main application (UI + Ollama integration)
+│   ├── patient_dataset.json  # 500 synthetic patient records
+│   └── generate_dataset.py   # Script to regenerate the dataset
+├── .env.example        # Environment variable template
+├── .gitignore
+├── package.json
+└── README.md
+```
 
-### Code Splitting
+## Tech Stack
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+- React 19 (Create React App)
+- Ollama + BioMistral 7B (local LLM inference)
+- Inline styles (single-file component)
 
-### Analyzing the Bundle Size
+## License
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+MIT

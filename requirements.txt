@@ -1,0 +1,4 @@
+# No external dependencies — generate_dataset.py uses only the Python standard library.
+# This file is included for completeness.
+#
+# Python >= 3.8 recommended
